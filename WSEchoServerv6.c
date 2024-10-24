@@ -109,36 +109,64 @@ int main(int argc, char* argv[]) {
 
 
 //DONE:
-    //1. The primary source code file will be named WSEchoServerv6.c. This will contain your
-    //main() function.As with your client, verify the correct number of command line
-    //arguments have been provided by the user.You don’t need to validate the content of
-    //those arguments.If no port number is included on the command line, you may use a
-    //default port of your own choosing.
+/*
+1. The primary source code file will be named WSEchoServerv6.c. This will contain your
+main() function. As with your client, verify the correct number of command line
+arguments have been provided by the user. You don’t need to validate the content of
+those arguments. If no port number is included on the command line, you may use a
+default port of your own choosing.
 
-    //2. Initialize the WinSock DLL. After a successful call to WSAStartup(), handle any errors by
-    //calling DisplayFatalErr()
+2. Initialize the WinSock DLL. After a successful call to WSAStartup(), handle any errors by
+calling DisplayFatalErr().
 
-    //Create the server socket.
+3. Create the server socket.
 
-    //4. Load the server information into the server’s sockaddr_in6 structure (see Lecture 12
-    //slide titled “Server Socket Initialization”).Use in6addr_any as the server’s IP
-    //address
+4. Load the server information into the server’s sockaddr_in6 structure (see Lecture 12
+slide titled “Server Socket Initialization”). Use in6addr_any as the server’s IP
+address.
 
-    //5. bind() the server socket to this sockaddr_in6 structure.
+5. bind() the server socket to this sockaddr_in6 structure.
 
-    //6. Call listen() to tell the server the maximum simultaneous client connection requests
-    //to allow.
+6. Call listen() to tell the server the maximum simultaneous client connection requests
+to allow.
 
-    //7. Display a message on the server console that includes your initials, similar to this:
-    //JD's IPv6 echo server is ready for client connection...
+7. Display a message on the server console that includes your initials, similar to this:
+JD's IPv6 echo server is ready for client connection...
 
-    //8. Enter a “forever” loop like this:
-    //for (;;) { ... }
-    //From within this loop, call accept() and wait for a client connection.Calling
-    //accept() from within this for loop will allow the server to accept connection requests
-    //from one or more clients, but only one at a time.Echo back one complete client
-    //message per connection request. (This non - threaded program will not support multiple
-    //simultaneous client connections.)
+8. Enter a “forever” loop like this:
+for (;;) { ... }
+From within this loop, call accept() and wait for a client connection. Calling
+accept() from within this for loop will allow the server to accept connection requests
+from one or more clients, but only one at a time. Echo back one complete client
+message per connection request. (This non-threaded program will not support multiple
+simultaneous client connections.)
 
-    //9. Each time a client connects to the server in this loop, display the IP address and port
-    //number of the client, and the server’s own port number
+9. Each time a client connects to the server in this loop, display the IP address and port
+number of the client, and the server’s own port number.
+
+10. From within the “forever” loop, call a function named ProcessClient() to receive the
+message from your client. Implement ProcessClient() in a separate source code file
+named ProcessClient.c. Declare ProcessClient() in WSEchoServerv6.c, outside of
+main(), the same way that DisplayFatalErr() is declared. Check for errors in the
+Sockets receive process, as indicated by a negative return value from recv().
+
+11. Echo the message back to the client from within ProcessClient(). Be sure that all of
+the client’s message has been received and echoed by the server. You can’t count bytes
+as you did with the client, because the server doesn’t know in advance how many bytes
+to expect from the client, and whether all of those bytes will be received in the initial call
+to recv(). So call recv() repeatedly until recv() returns message length 0,
+indicating that the client has closed the connection. (See the Lecture 11 slide titled
+“recv( )” for details.)
+
+12. While still in ProcessClient(), close the client socket, return to the “forever” loop in
+WSEchoServerv6.c, then call accept() and wait for another client connection.
+
+13. While waiting in the “forever” loop for client communication, the server can be terminated
+with CTRL+C. No special programming is required to enable this. Note that CTRL+C
+works when running the server from the command line, but not if you are running it in the
+Visual Studio debugger. Because we are using this crude termination mechanism for the
+server, no call to closesocket() will be needed to close the server socket and no call
+to WSACleanup() will be needed to release the WinSock DLL resources. Those
+functions will be handled by the operating system. (In a real sockets program, omitting
+closesocket() and WSACleanup() would be considered poor design.)
+*/
