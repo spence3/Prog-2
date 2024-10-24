@@ -28,17 +28,19 @@
 // #define ALL required constants HERE, not inline
 // #define is a macro, don't terminate with ';' For example...
 #define RCVBUFSIZ 50 // buffer size for received messages
-char rcvBuffer[RCVBUFSIZ]; // Buffer to store received data
+const char rcvBuffer[RCVBUFSIZ]; // Buffer to store received data
 
 // declare any functions located in other .c files here
+#ifndef DISPLAYFATALERR_H
+#define DISPLAYFATALERR_H
+void DisplayFatalErr(const char* errMsg);
+#endif // !DISPLAYFATALERR_H
 
-void DisplayFatalErr(char* errMsg)
-{
-    // Returns errorcode from current task or thread
-    fprintf(stderr, "%s: %d\n", errMsg, WSAGetLastError());
-    WSACleanup();
-    exit(1);
-}
+#ifndef PROCESSCLIENT_H
+#define PROCESSCLIENT_H
+void ProcessClient(int clientSock, char* rcvBuffer, int bufferSize);
+#endif // !DISPLAYFATALERR_H
+
 
 int main(int argc, char* argv[]) {
     // Declare ALL variables and structures for main() HERE, NOT INLINE (including the following...)
@@ -92,14 +94,15 @@ int main(int argc, char* argv[]) {
     for (;;) {
         clientInfoLen = sizeof(clientInfo);
         clientSock = accept(serverSock, (struct sockaddr*)&clientInfo, &clientInfoLen);
-        if (clientSock != -1) {
+        
+        //display the IP address and port number of the client, and the server’s own port number
+        char clientIP[INET6_ADDRSTRLEN];
+        inet_ntop(AF_INET6, &clientInfo.sin6_addr, clientIP, sizeof(clientIP));
+        unsigned short clientPort = ntohs(clientInfo.sin6_port);
+        printf("Proeccessing the client at %s, client port %d, server port %d\n", clientIP, clientPort, port);
 
-            //display the IP address and port number of the client, and the server’s own port number
-            char clientIP[INET6_ADDRSTRLEN];
-            inet_ntop(AF_INET6, &clientInfo.sin6_addr, clientIP, sizeof(clientIP));
-            unsigned short clientPort = ntohs(clientInfo.sin6_port);
-            printf("Proeccessing the client at %s, client port %d, server port %d", clientIP, clientPort, port);
-        }
+        //Echos message back to client
+        ProcessClient(clientSock, rcvBuffer, RCVBUFSIZ);
     }
     exit(0);
 }
